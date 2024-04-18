@@ -124,7 +124,21 @@ int main(void) {
                             ball.speed.y *= -1;
                         }
 
-                        // TODO: collision detection
+                        if (CheckCollisionCircleRec(ball.position, ball.radius, player.bounds)) {
+                            ball.speed.y *= -1;
+                            ball.speed.x = (ball.position.x - (player.position.x + player.size.x / 2)) / player.size.x * 5.0f;
+                        }
+
+                        for (int i = 0; i < BRICKS_LINES; i++) {
+                            for (int j = 0; j < BRICKS_PER_LINE; j++) {
+                                if (bricks[i][j].active && CheckCollisionCircleRec(ball.position, ball.radius, bricks[i][j].bounds)) {
+                                    bricks[i][j].active = false;
+                                    ball.speed.y *= -1;
+
+                                    break;
+                                }
+                            }
+                        }
 
                         // game ending logic
                         if (ball.position.y + ball.radius >= screenHeight) {
