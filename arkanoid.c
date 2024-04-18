@@ -49,6 +49,8 @@ int main(void) {
     Texture2D texPaddle = LoadTexture("resources/paddle.png");
     Texture2D texBrick = LoadTexture("resources/brick.png");
 
+    Font font = LoadFont("resources/setback.png");
+
     // game required variables
     GameScreen screen = LOGO;
 
@@ -193,7 +195,7 @@ int main(void) {
                         DrawTexture(texLogo, screenWidth / 2 - texLogo.width / 2, screenHeight / 2 - texLogo.height / 2, WHITE);
                     } break;
                     case TITLE: {
-                        DrawText("ARKANOID", 20, 20, 40, DARKGREEN);
+                        DrawTextEx(font, "ARKANOID", (Vector2){screenWidth / 2 - MeasureText("ARKANOID", 150) / 2, 80}, 150, 10, MAROON);
                         if((framesCounter / 30) % 2 == 0) {
                             DrawText("PRESS [ENTER] TO START", 
                                 GetScreenWidth()/2 - MeasureText("PRESS [ENTER] TO START", 20) / 2,
@@ -248,7 +250,7 @@ int main(void) {
                         }
                     } break;
                     case ENDING: {
-                        DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
+                        DrawTextEx(font, "GAME FINISHED", (Vector2){screenWidth / 2 - MeasureText("GAME FINISHED", 80) / 2, 100}, 80, 6, MAROON);
                         
                         if ((framesCounter) % 2 == 0) {
                             DrawText("PRESS [ENTER] TO PLAY AGAIN", 
@@ -269,6 +271,8 @@ int main(void) {
     UnloadTexture(texPaddle);
     UnloadTexture(texBrick);
     UnloadTexture(texLogo);
+
+    UnloadFont(font);
 
     CloseWindow();
 

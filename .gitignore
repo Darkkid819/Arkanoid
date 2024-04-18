@@ -3,5 +3,5 @@
 !*.c
 !Makefile
 !README.md
+!resources/*
 !.gitignore
-!resources/
