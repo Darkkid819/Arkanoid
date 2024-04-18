@@ -13,19 +13,23 @@ typedef enum GameScreen {
 } GameScreen;
 
 typedef struct Player {
-    Vector2 position, speed, size;
+    Vector2 position;
+    Vector2 speed;
+    Vector2 size;
     Rectangle bounds;
     int lives;
 } Player;
 
 typedef struct Ball {
-    Vector2 position, speed;
+    Vector2 position;
+    Vector2 speed;
     float radius;
     bool active;
 } Ball;
 
 typedef struct Brick {
-    Vector2 position, size;
+    Vector2 position;
+    Vector2 size;
     Rectangle bounds;
     int resistance;
     bool active;
@@ -58,14 +62,14 @@ int main(void) {
     // initialize ball
     ball.radius = 10.0f;
     ball.active = false;
-    ball.position = (Vector2){player.position.x + player.position.x/2, player.position.y - ball.radius*2};
+    ball.position = (Vector2){player.position.x + player.size.x/2, player.position.y - ball.radius*2};
     ball.speed = (Vector2){4.0f, 4.0f};
 
     // initialize bricks
     for (int i = 0; i < BRICKS_LINES; i++) {
         for (int j = 0; j < BRICKS_PER_LINE; j++) {
             bricks[i][j].size = (Vector2){screenWidth/BRICKS_PER_LINE, 20};
-            bricks[i][j].position = (Vector2){i*bricks[i][j].size.x, i*bricks[i][j].size.y + BRICKS_POSITION_Y};
+            bricks[i][j].position = (Vector2){j * bricks[i][j].size.x, i * bricks[i][j].size.y + BRICKS_POSITION_Y};
             bricks[i][j].bounds = (Rectangle){bricks[i][j].position.x, bricks[i][j].position.y, bricks[i][j].size.x, bricks[i][j].size.y};
             bricks[i][j].active = true;
         }
