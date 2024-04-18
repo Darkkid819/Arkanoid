@@ -1,5 +1,7 @@
 #include "raylib.h"
 
+#define TEXTURES // Alternative: SHAPES
+
 #define PLAYER_LIVES 5
 #define BRICKS_LINES 5
 #define BRICKS_PER_LINE 20
@@ -41,6 +43,11 @@ int main(void) {
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "PROJECT: ARKANOID");
+
+    Texture2D texLogo = LoadTexture("resources/raylib_logo.png");
+    Texture2D texBall = LoadTexture("resources/ball.png");
+    Texture2D texPaddle = LoadTexture("resources/paddle.png");
+    Texture2D texBrick = LoadTexture("resources/brick.png");
 
     // game required variables
     GameScreen screen = LOGO;
@@ -183,7 +190,7 @@ int main(void) {
 
                 switch (screen) {
                     case LOGO: {
-                        DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+                        DrawTexture(texLogo, screenWidth / 2 - texLogo.width / 2, screenHeight / 2 - texLogo.height / 2, WHITE);
                     } break;
                     case TITLE: {
                         DrawText("ARKANOID", 20, 20, 40, DARKGREEN);
@@ -196,23 +203,39 @@ int main(void) {
                         }
                     } break;
                     case GAMEPLAY: {
+                        #ifdef SHAPES
+                            // draw player and ball
+                            DrawRectangle(player.position.x, player.position.y, player.size.x, player.size.y, BLACK);
+                            DrawCircleV(ball.position, ball.radius, MAROON);
 
-                        // draw player and ball
-                        DrawRectangle(player.position.x, player.position.y, player.size.x, player.size.y, BLACK);
-                        DrawCircleV(ball.position, ball.radius, MAROON);
-
-                        // draw bricks
-                        for (int i = 0; i < BRICKS_LINES; i++) {
-                            for (int j = 0; j < BRICKS_PER_LINE; j++) {
-                                if (bricks[i][j].active) {
-                                    if ((i + j) % 2 == 0) {
-                                        DrawRectangle(bricks[i][j].position.x, bricks[i][j].position.y, bricks[i][j].size.x, bricks[i][j].size.y, GRAY);
-                                    } else {
-                                        DrawRectangle(bricks[i][j].position.x, bricks[i][j].position.y, bricks[i][j].size.x, bricks[i][j].size.y, DARKGRAY);
+                            // draw bricks
+                            for (int i = 0; i < BRICKS_LINES; i++) {
+                                for (int j = 0; j < BRICKS_PER_LINE; j++) {
+                                    if (bricks[i][j].active) {
+                                        if ((i + j) % 2 == 0) {
+                                            DrawRectangle(bricks[i][j].position.x, bricks[i][j].position.y, bricks[i][j].size.x, bricks[i][j].size.y, GRAY);
+                                        } else {
+                                            DrawRectangle(bricks[i][j].position.x, bricks[i][j].position.y, bricks[i][j].size.x, bricks[i][j].size.y, DARKGRAY);
+                                        }
                                     }
                                 }
                             }
-                        }
+                        #elif defined TEXTURES
+                            DrawTextureEx(texPaddle, player.position, 0.0f, 1.0f, WHITE);
+                            DrawTexture(texBall, ball.position.x - ball.radius / 2, ball.position.y - ball.radius / 2, MAROON);
+
+                            for (int i = 0; i < BRICKS_LINES; i++) {
+                                for (int j = 0; j < BRICKS_PER_LINE; j++) {
+                                    if (bricks[i][j].active) {
+                                        if ((i + j) % 2 == 0) {
+                                            DrawTextureEx(texBrick, bricks[i][j].position, 0.0f, 1.0f, GRAY);
+                                        } else {
+                                            DrawTextureEx(texBrick, bricks[i][j].position, 0.0f, 1.0f, DARKGRAY);
+                                        }
+                                    }
+                                }
+                            }
+                        #endif
 
                         // draw player lives
                         for (int i = 0; i < player.lives; i++) {
@@ -241,6 +264,11 @@ int main(void) {
         EndDrawing();
 
     }
+
+    UnloadTexture(texBall);
+    UnloadTexture(texPaddle);
+    UnloadTexture(texBrick);
+    UnloadTexture(texLogo);
 
     CloseWindow();
 
