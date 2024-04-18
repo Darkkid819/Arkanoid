@@ -95,7 +95,60 @@ int main(void) {
             } break;
             case GAMEPLAY: {
                 if (!gamePaused) {
-                    // TODO: gameplay logic
+                    // player movement
+                    if (IsKeyDown(KEY_LEFT)) {
+                        player.position.x -= player.speed.x;
+                    }
+                    if (IsKeyDown(KEY_RIGHT)) {
+                        player.position.x += player.speed.x;
+                    }
+                    
+                    if (player.position.x <= 0) {
+                        player.position.x = 0;
+                    }
+                    if (player.position.x + player.size.x >= screenWidth) {
+                        player.position.x = screenWidth - player.size.x;
+                    }
+
+                    player.bounds = (Rectangle){player.position.x, player.position.y, player.size.x, player.size.y};
+
+                    // ball movement
+                    if (ball.active) {
+                        ball.position.x += ball.speed.x;
+                        ball.position.y += ball.speed.y;
+
+                        if (ball.position.x + ball.radius >= screenWidth || ball.position.x - ball.radius <= 0) {
+                            ball.speed.x *= -1;
+                        }
+                        if (ball.position.y - ball.radius <= 0) {
+                            ball.speed.y *= -1;
+                        }
+
+                        // TODO: collision detection
+
+                        // game ending logic
+                        if (ball.position.y + ball.radius >= screenHeight) {
+                            ball.position.x = player.position.x + player.size.x / 2;
+                            ball.position.y = player.position.y - ball.radius - 1.0f;
+                            ball.speed = (Vector2){0, 0};
+                            ball.active = false;
+
+                            player.lives--;
+                        }
+
+                        if (player.lives < 0) {
+                            screen = ENDING;
+                            player.lives = 5;
+                            framesCounter = 0;
+                        }
+                    } else {
+                        ball.position.x = player.position.x + player.size.x/2;
+
+                        if (IsKeyPressed(KEY_SPACE)) {
+                            ball.active = true;
+                            ball.speed = (Vector2){0, -5.0f};
+                        }
+                    }
                 }
 
             } break;
@@ -148,7 +201,7 @@ int main(void) {
                         }
 
                         // draw player lives
-                        for (int i = 0; i < PLAYER_LIVES; i++) {
+                        for (int i = 0; i < player.lives; i++) {
                             DrawRectangle(20 + 40 * i, screenHeight - 30, 35, 10, LIGHTGRAY);
                         }
 
