@@ -51,6 +51,12 @@ int main(void) {
 
     Font font = LoadFont("resources/setback.png");
 
+    InitAudioDevice();
+
+    Sound fxStart = LoadSound("resources/start.wav");
+    Sound fxBounce = LoadSound("resources/bounce.wav");
+    Sound fxExplosion = LoadSound("resources/explosion.wav");
+
     // game required variables
     GameScreen screen = LOGO;
 
@@ -100,9 +106,14 @@ int main(void) {
             case TITLE: {
                 framesCounter++;
 
-                if (IsKeyPressed(KEY_ENTER)) screen = GAMEPLAY;
+                if (IsKeyPressed(KEY_ENTER)){
+                    screen = GAMEPLAY;
+                    PlaySound(fxStart);
+                }
             } break;
             case GAMEPLAY: {
+                if (IsKeyPressed('P')) gamePaused = !gamePaused;
+
                 if (!gamePaused) {
                     // player movement
                     if (IsKeyDown(KEY_LEFT)) {
@@ -136,6 +147,7 @@ int main(void) {
                         if (CheckCollisionCircleRec(ball.position, ball.radius, player.bounds)) {
                             ball.speed.y *= -1;
                             ball.speed.x = (ball.position.x - (player.position.x + player.size.x / 2)) / player.size.x * 5.0f;
+                            PlaySound(fxBounce);
                         }
 
                         for (int i = 0; i < BRICKS_LINES; i++) {
@@ -143,6 +155,7 @@ int main(void) {
                                 if (bricks[i][j].active && CheckCollisionCircleRec(ball.position, ball.radius, bricks[i][j].bounds)) {
                                     bricks[i][j].active = false;
                                     ball.speed.y *= -1;
+                                    PlaySound(fxExplosion);
 
                                     break;
                                 }
@@ -273,6 +286,12 @@ int main(void) {
     UnloadTexture(texLogo);
 
     UnloadFont(font);
+
+    UnloadSound(fxStart);
+    UnloadSound(fxBounce);
+    UnloadSound(fxExplosion);
+    
+    CloseAudioDevice();
 
     CloseWindow();
 
