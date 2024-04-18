@@ -61,7 +61,6 @@ int main(void) {
     GameScreen screen = LOGO;
 
     int framesCounter = 0;
-    int gameResult = -1;
     bool gamePaused = false;
 
     Player player = {0};
