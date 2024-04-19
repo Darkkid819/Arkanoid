@@ -12,7 +12,8 @@ typedef enum GameScreen {
     LOGO,
     TITLE,
     GAMEPLAY,
-    ENDING
+    ENDING,
+    WIN
 } GameScreen;
 
 typedef struct Player {
@@ -43,6 +44,7 @@ const int screenHeight = 450;
 
 int framesCounter = 0;
 bool gamePaused = false;
+bool win = false;
 
 GameScreen screen = LOGO;
 Player player = {0};
@@ -73,6 +75,7 @@ void UpdateBallMovement(void);
 void CheckCollisions(void);
 void CheckEnding(void);
 void UpdateEnding(void);
+void CheckWin(void);
 void ResetBall(void);
 void DrawFrame(void);
 void DrawLogo(void);
@@ -83,6 +86,7 @@ void DrawTextures(void);
 void DrawPlayerLives(void);
 void DrawPauseScreen(void);
 void DrawEnding(void);
+void DrawWin(void);
 void DeInitGame(void);
 
 #endif

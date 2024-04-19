@@ -43,6 +43,8 @@ void InitResources(void) {
 }
 
 void InitVariables(void) {
+    win = false;
+
     player.position = (Vector2){screenWidth/2, screenHeight*7/8};
     player.speed = (Vector2){8.0f, 0.0f};
     player.size = (Vector2){100, 24};
@@ -50,7 +52,7 @@ void InitVariables(void) {
 
     ball.radius = 10.0f;
     ball.active = false;
-    ball.position = (Vector2){player.position.x + player.size.x/2, player.position.y - ball.radius*2};
+    ball.position = (Vector2){player.position.x + player.size.x/2, player.position.y - ball.radius};
     ball.speed = (Vector2){4.0f, 4.0f};
 
     for (int i = 0; i < BRICKS_LINES; i++) {
@@ -74,7 +76,8 @@ void UpdateGame(void) {
         case GAMEPLAY: {
             UpdateGameplay();   
         } break;
-        case ENDING: {
+        case ENDING:
+        case WIN: {
             UpdateEnding(); 
         } break;
         default: break;
@@ -113,6 +116,7 @@ void UpdateMovement(void) {
         UpdateBallMovement();  
         CheckCollisions();
         CheckEnding();
+        CheckWin();
     } else {
         ResetBall();
     }     
@@ -194,6 +198,25 @@ void UpdateEnding(void) {
     }
 }
 
+void CheckWin(void) {
+    win = true;
+    for (int i = 0; i < BRICKS_LINES; i++) {
+        for (int j = 0; j < BRICKS_PER_LINE; j++) {
+            if (bricks[i][j].active) {
+                win = false;
+                break;
+            }
+        }
+        if (!win) break;
+    }
+
+    if (win) {
+        screen = WIN;
+        InitVariables();
+        framesCounter = 0;
+    }
+}
+
 void ResetBall(void) {
     ball.position.x = player.position.x + player.size.x/2;
 
@@ -219,6 +242,9 @@ void DrawFrame(void) {
         case ENDING: {
             DrawEnding();
         } break;
+        case WIN: {
+            DrawWin();
+        }
         default: break;
     }
 }
@@ -228,7 +254,7 @@ void DrawLogo(void) {
 }
 
 void DrawTitle(void) {
-    DrawTextEx(font, "ARKANOID", (Vector2){screenWidth / 2 - MeasureText("ARKANOID", 150) / 2, 80}, 150, 10, MAROON);
+    DrawTextEx(font, "ARKANOID", (Vector2){screenWidth / 2 - MeasureText("ARKANOID", 80) / 2, 80}, 80, 10, MAROON);
             
     if((framesCounter / 30) % 2 == 0) {
         DrawText("PRESS [ENTER] TO START", 
@@ -268,7 +294,7 @@ void DrawShapes(void) {
 
 void DrawTextures(void) {
     DrawTextureEx(texPaddle, player.position, 0.0f, 1.0f, WHITE);
-    DrawTexture(texBall, ball.position.x - ball.radius / 2, ball.position.y - ball.radius / 2, MAROON);
+    DrawTexture(texBall, ball.position.x - ball.radius, ball.position.y - ball.radius, MAROON);
 
     for (int i = 0; i < BRICKS_LINES; i++) {
         for (int j = 0; j < BRICKS_PER_LINE; j++) {
@@ -296,7 +322,19 @@ void DrawPauseScreen(void) {
 }
 
 void DrawEnding(void) {
-    DrawTextEx(font, "GAME FINISHED", (Vector2){screenWidth / 2 - MeasureText("GAME FINISHED", 80) / 2, 100}, 80, 6, MAROON);
+    DrawTextEx(font, "YOU LOSE", (Vector2){screenWidth / 2 - MeasureText("YOU LOSE", 80) / 2, 100}, 80, 6, MAROON);
+                        
+    if ((framesCounter) % 2 == 0) {
+        DrawText("PRESS [ENTER] TO PLAY AGAIN", 
+            GetScreenWidth()/2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20) / 2,
+            GetScreenHeight() / 2 + 80,
+            20,
+            GRAY);
+    }
+}
+
+void DrawWin(void) {
+    DrawTextEx(font, "YOU WON", (Vector2){screenWidth / 2 - MeasureText("YOU WON", 80) / 2, 100}, 80, 6, MAROON);
                         
     if ((framesCounter) % 2 == 0) {
         DrawText("PRESS [ENTER] TO PLAY AGAIN", 
