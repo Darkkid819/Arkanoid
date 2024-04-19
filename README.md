@@ -14,4 +14,4 @@ To run this game, ensure you have raylib installed on your system. You can compi
 
 ```bash
 make
-./arkanoid
+./game
